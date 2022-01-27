@@ -128,7 +128,7 @@ class PointNetfeat(nn.Module):
         if self.pooling == "max":
             x = torch.max(x, 2, keepdim=True)[0]
         elif self.pooling == "mean":
-            x = torch.mean(x, 2, keepdim=True)[0]
+            x = torch.mean(x, 2)
         else:
             raise Exception("Unknown pooling: %s" % self.pooling)
         x = x.view(-1, self.z_dim)
