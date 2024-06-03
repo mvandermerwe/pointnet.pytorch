@@ -123,6 +123,8 @@ class PointNetfeat(nn.Module):
             x = x.transpose(2, 1)
             x = torch.bmm(x, trans)
             x = x.transpose(2, 1)
+        else:
+            trans = None
         x = F.relu(self.bn1(self.conv1(x)))
 
         if self.feature_transform:
