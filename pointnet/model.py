@@ -104,7 +104,6 @@ class PointNetfeat(nn.Module):
         self.z_dim = z_dim
         self.pooling = pooling
 
-        self.stn = STN3d()
         self.conv1 = torch.nn.Conv1d(self.input_dim, 64, 1)
         self.conv2 = torch.nn.Conv1d(64, 128, 1)
         self.conv3 = torch.nn.Conv1d(128, self.z_dim, 1)
@@ -114,14 +113,16 @@ class PointNetfeat(nn.Module):
         self.global_feat = global_feat
         self.feature_transform = feature_transform
         if self.feature_transform:
+            self.stn = STN3d()
             self.fstn = STNkd(k=64)
 
     def forward(self, x):
         n_pts = x.size()[2]
-        trans = self.stn(x)
-        x = x.transpose(2, 1)
-        x = torch.bmm(x, trans)
-        x = x.transpose(2, 1)
+        if self.feature_transform:
+            trans = self.stn(x)
+            x = x.transpose(2, 1)
+            x = torch.bmm(x, trans)
+            x = x.transpose(2, 1)
         x = F.relu(self.bn1(self.conv1(x)))
 
         if self.feature_transform:
